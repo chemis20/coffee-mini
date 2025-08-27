@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>BrewPoint Меню</title>
+  <style>
+    body { font-family: Arial; background:#f8f5f2; margin:0; padding:16px; }
+    .card { width:150px; background:#fff; border-radius:12px; display:inline-block; margin:8px; box-shadow:0 2px 8px rgba(0,0,0,.15); text-align:center; }
+    .card img { width:100%; border-radius:12px 12px 0 0; }
+    button { background:#8b5e34; color:#fff; border:none; border-radius:8px; padding:8px 12px; cursor:pointer; }
+    #cart { margin-top:24px; background:#fff; padding:12px; border-radius:12px; }
+  </style>
+</head>
+<body>
+  <h2>Меню BrewPoint</h2>
+
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1510707577719-ae7afe3e6c8e?auto=format&fit=crop&w=300&q=80">
+    <h3>Латте</h3>
+    <p>200₽</p>
+    <button onclick="addToCart('Латте',200)">В корзину</button>
+  </div>
+
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=300&q=80">
+    <h3>Капучино</h3>
+    <p>180₽</p>
+    <button onclick="addToCart('Капучино',180)">В корзину</button>
+  </div>
+
+  <div id="cart">
+    <h3>Корзина</h3>
+    <ul id="cart-list"></ul>
+    <p>Итого: <span id="total">0</span>₽</p>
+    <button onclick="pay()">Оплатить</button>
+  </div>
+
+  <script>
+    let cart = [];
+    function addToCart(name,price){
+      cart.push({name,price});
+      document.getElementById('cart-list').innerHTML += `<li>${name} ${price}₽</li>`;
+      document.getElementById('total').textContent = cart.reduce((s,i)=>s+i.price,0);
+    }
+    function pay(){
+      alert('Оплата через Telegram Pay – подключится при переходе на прод');
+    }
+  </script>
+</body>
+</html>
