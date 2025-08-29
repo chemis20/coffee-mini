@@ -107,13 +107,16 @@
   <button onclick="pay()" class="action">Оформить заказ</button>
 </div>
 
-<!-- Модальное окно «Заказ оформлен» -->
-<div id="successModal" class="modal">
+<!-- Модальное окно «Проверьте заказ» (добавьте этот блок) -->
+<div id="checkoutModal" class="modal">
   <div class="modal-content">
-    <h3>Заказ оформлен!</h3>
-    <ul id="successList"></ul>
-    <p>Номер: #<span id="orderNumber">12345</span></p>
-    <button onclick="closeMiniApp()">Вернуться в чат</button>
+    <h3>Проверьте заказ</h3>
+    <p><b>Адрес кофейни:</b> ул. Ленина, 10 (BrewPoint)</p>
+    <ul id="finalList"></ul>
+    <p><b>Сумма:</b> <span id="finalTotal">0</span>₽</p>
+    <p><b>Время:</b> <span id="finalTime">—</span></p>
+    <button onclick="closeCheckout()">Вернуться к каталогу</button>
+    <button onclick="pay()">Оформить заказ</button>
   </div>
 </div>
 
