@@ -1,22 +1,24 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <title>BrewPoint</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-    body{background:#f7f3ee;font-family:'Inter',sans-serif;margin:0;padding:16px;color:#333}
-    .section{margin-bottom:24px}
+    body{margin:0;font-family:'Inter',sans-serif;color:#333;background:linear-gradient(135deg,#f7f3ee 0%,#e8d8c3 100%)}
+    .section{margin:32px 8px}
     .section h2{color:#8b5e34;font-weight:600;margin:0 0 8px 0}
-    .card{width:160px;background:#fff;border-radius:16px;display:inline-block;margin:8px;box-shadow:0 4px 12px rgba(0,0,0,.08);text-align:center;overflow:hidden}
-    .card img{width:100%;height:100px;object-fit:cover;border-radius:16px 16px 0 0}
-    .card h3{margin:8px 0 4px;font-size:15px;font-weight:600}
-    .card p.desc{font-size:12px;color:#555;margin:0 4px 6px}
+    .cards{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+    .card{flex:0 0 30%;max-width:190px;background:#fff;border-radius:20px;box-shadow:0 6px 16px rgba(0,0,0,.1);text-align:center;overflow:hidden}
+    .card img{width:100%;height:110px;object-fit:cover;border-radius:20px 20px 0 0}
+    .card h3{font-size:18px;font-weight:600;margin:10px 0 4px}
+    .card p.desc{font-size:13px;color:#555;margin:0 8px 6px}
     .card .price{font-weight:600;color:#8b5e34}
-    button{background:#a67c52;color:#fff;border:none;border-radius:12px;padding:8px 12px;font-size:14px;cursor:pointer;transition:.2s}
+    button{background:#a67c52;color:#fff;border:none;border-radius:12px;padding:8px 12px;font-size:14px;cursor:pointer;transition:.2s;margin-top:-2px}
     button:hover{background:#8b5e34}
-    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:999}
-    .modal-content{background:#fff;border-radius:20px;padding:24px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:999}
+    .modal-content{background:#fff;border-radius:20px;padding:24px;max-width:320px;margin:20% auto;text-align:center}
+    .del-btn{background:#e74c3c;color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:12px}
   </style>
 </head>
 <body>
@@ -26,98 +28,70 @@
 <!-- Кофе -->
 <div class="section">
   <h2>Кофе</h2>
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=300&q=80">
-    <h3>Латте</h3>
-    <p class="desc">Классический молочный кофе</p>
-    <p class="price">200₽</p>
-    <button onclick="openModal('Латте',200)">В корзину</button>
-  </div>
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=300&q=80">
-    <h3>Капучино</h3>
-    <p class="desc">Насыщенный вкус с молочной пенкой</p>
-    <p class="price">180₽</p>
-    <button onclick="openModal('Капучино',180)">В корзину</button>
+  <div class="cards">
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=300&q=80">
+      <h3>Латте</h3>
+      <p class="desc">Молочный кофе</p>
+      <p class="price">200₽</p>
+      <button onclick="openModal('Латте',200)">В корзину</button>
+    </div>
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=300&q=80">
+      <h3>Капучино</h3>
+      <p class="desc">С пенкой</p>
+      <p class="price">180₽</p>
+      <button onclick="openModal('Капучино',180)">В корзину</button>
+    </div>
   </div>
 </div>
 
 <!-- Десерты -->
 <div class="section">
   <h2>Десерты</h2>
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=300&q=80">
-    <h3>Круассан</h3>
-    <p class="desc">Слоёное тесто с хрустящей корочкой</p>
-    <p class="price">120₽</p>
-    <button onclick="addToCart('Круассан',120)">В корзину</button>
-  </div>
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1607478900766-efe13248b125?auto=format&fit=crop&w=300&q=80">
-    <h3>Чизкейк</h3>
-    <p class="desc">Нежный творожный десерт</p>
-    <p class="price">220₽</p>
-    <button onclick="addToCart('Чизкейк',220)">В корзину</button>
-  </div>
-</div>
-
-<!-- Модальное окно модификаторов -->
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <h3>Выберите модификаторы</h3>
-    <label><input type="checkbox" id="sugar"> 1 ложка сахара (+0₽)</label><br>
-    <label><input type="checkbox" id="vanilla"> Ванильный (+20₽)</label><br>
-    <label><input type="checkbox" id="caramel"> Карамельный (+20₽)</label><br>
-    <label><input type="checkbox" id="chocolate"> Шоколадный (+20₽)</label><br>
-    <button onclick="confirmModal()">Далее к времени</button>
-    <button onclick="closeModal()">Отмена</button>
+  <div class="cards">
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=300&q=80">
+      <h3>Круассан</h3>
+      <p class="desc">Хрустящий</p>
+      <p class="price">120₽</p>
+      <button onclick="addToCart('Круассан',120)">В корзину</button>
+    </div>
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1607478900766-efe13248b125?auto=format&fit=crop&w=300&q=80">
+      <h3>Чизкейк</h3>
+      <p class="desc">Нежный</p>
+      <p class="price">220₽</p>
+      <button onclick="addToCart('Чизкейк',220)">В корзину</button>
+    </div>
   </div>
 </div>
 
-<!-- Модальное окно времени -->
-<div id="timeModal" class="modal">
-  <div class="modal-content">
-    <h3>Когда приготовить?</h3>
-    <button class="time-btn" onclick="selectTime('Сейчас')">В ближайшее время</button>
-    <button class="time-btn" onclick="selectTime('Через 30 мин')">Через 30 минут</button>
-    <button class="time-btn" onclick="selectTime('Через 1 час')">Через 1 час</button>
-    <label>Свой вариант: <input type="time" id="customTime"></label>
-    <button onclick="selectCustom()">Свой вариант</button>
-  </div>
+<!-- Удалить всё -->
+<div style="text-align:center;margin:20px">
+  <button onclick="removeAll()" class="del-btn">Очистить корзину</button>
 </div>
 
 <!-- Корзина -->
-<div id="cart">
+<div id="cart" class="modal-content" style="margin:20px 8px;max-width:400px">
   <h2>Корзина</h2>
   <ul id="cart-list"></ul>
   <p id="timeLine">Время: не выбрано</p>
   <p>Итого: <span id="total">0</span>₽</p>
-  <button onclick="pay()">Оплатить</button>
+  <button onclick="pay()" class="action">Оформить заказ</button>
 </div>
 
-<!-- Модальное окно «Проверьте заказ» -->
-<div id="checkoutModal" class="modal">
-  <div class="modal-content">
-    <h3>Проверьте заказ</h3>
-    <p><b>Адрес кофейни:</b> ул. Ленина, 10 (BrewPoint)</p>
-    <ul id="finalList"></ul>
-    <p><b>Сумма:</b> <span id="finalTotal">0</span>₽</p>
-    <p><b>Время:</b> <span id="finalTime">—</span></p>
-    <button onclick="closeCheckout()">Вернуться к каталогу</button>
-    <button onclick="fakePay()">Оплатить</button>
-  </div>
-</div>
-
-<!-- Модальное окно «Заказ оплачен» -->
+<!-- Модальное окно «Заказ оформлен» -->
 <div id="successModal" class="modal">
   <div class="modal-content">
-    <h3>Заказ оплачен!</h3>
-    <p>Номер заказа: #<span id="orderNumber">12345</span></p>
-    <p>Ждём вас к выбранному времени.</p>
-    <button onclick="window.location.reload()">Новый заказ</button>
+    <h3>Заказ оформлен!</h3>
+    <ul id="successList"></ul>
+    <p>Номер: #<span id="orderNumber">12345</span></p>
+    <button onclick="closeMiniApp()">Вернуться в чат</button>
   </div>
 </div>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
   let cart = [];
   let selectedTime = null;
@@ -143,8 +117,6 @@
     closeModal();
     openTimeModal();
   }
-
-  /* ---------- выбор времени ---------- */
   function openTimeModal(){
     document.getElementById('timeModal').style.display = 'block';
   }
@@ -163,8 +135,6 @@
     addToCart(currentItem.name, currentItem.price);
     closeTimeModal();
   }
-
-  /* ---------- корзина + удаление ---------- */
   function addToCart(name, price){
     cart.push({name, price, time: selectedTime});
     updateCart();
@@ -172,41 +142,28 @@
   function updateCart(){
     const list=document.getElementById('cart-list');
     list.innerHTML='';
-    cart.forEach((item, idx)=>list.innerHTML+=`<li>${item.name} ${item.price}₽ – ${item.time} <button onclick="removeItem(${idx})" style="margin-left:8px;background:#e74c3c;color:#fff;border:none;border-radius:6px;padding:2px 6px;font-size:12px">×</button></li>`);
-    document.getElementById('total').textContent = cart.reduce((s,i)=>s+i.price,0);
-    document.getElementById('timeLine').textContent = `Время: ${selectedTime || 'не выбрано'}`;
+    cart.forEach((item, idx)=>list.innerHTML+=`<li>${item.name} ${item.price}₽ – ${item.time} <button onclick="removeItem(${idx})" class="del-btn">×</button></li>`);
+    document.getElementById('total').textContent=cart.reduce((s,i)=>s+i.price,0);
+    document.getElementById('timeLine').textContent=`Время: ${selectedTime || 'не выбрано'}`;
   }
   function removeItem(index){
-    cart.splice(index, 1);
+    cart.splice(index,1);
     updateCart();
   }
-
-  /* ---------- чек + закрытие мини-ап ---------- */
+  function removeAll(){
+    cart = [];
+    updateCart();
+  }
   function pay(){
     if(cart.length === 0){ alert('Корзина пуста'); return; }
-    document.getElementById('finalList').innerHTML = cart.map(i => `<li>${i.name} ${i.price}₽ – ${i.time}</li>`).join('');
-    document.getElementById('finalTotal').textContent = cart.reduce((s,i)=>s+i.price,0);
-    document.getElementById('finalTime').textContent = selectedTime || '—';
-    document.getElementById('checkoutModal').style.display = 'block';
-  }
-  function closeCheckout(){
-    document.getElementById('checkoutModal').style.display = 'none';
-  }
-  function fakePay(){
-    const order = cart.map(i=>`${i.name} ${i.price}₽ – ${i.time}`).join('\n');
-    const total = cart.reduce((s,i)=>s+i.price,0);
-    const msg = `✅ Заказ оформлен!\n\n📋 Состав:\n${order}\n💰 Сумма: ${total}₽\n⏰ Время: ${selectedTime}`;
-    
-    // 1. закрываем мини-ап
-    Telegram.WebApp.close();
-    
-    // 2. показываем сообщение в чат (заглушка)
-    alert(msg);
-    
-    // 3. показываем окно «Заказ оплачен»
+    document.getElementById('successList').innerHTML = cart.map(i=>`${i.name} ${i.price}₽ – ${i.time}`).join('<br>');
     document.getElementById('orderNumber').textContent = Math.floor(Math.random()*90000)+10000;
-    document.getElementById('checkoutModal').style.display = 'none';
     document.getElementById('successModal').style.display = 'block';
+  }
+  function closeMiniApp(){
+    const msg = `✅ Заказ оформлен!\n\n📋 Состав:\n${cart.map(i=>`${i.name} ${i.price}₽ – ${i.time}`).join('\n')}\n💰 Сумма: ${cart.reduce((s,i)=>s+i.price,0)}₽\n⏰ Время: ${selectedTime}`;
+    Telegram.WebApp.sendData(JSON.stringify({command:'order', items: cart, total: cart.reduce((s,i)=>s+i.price,0), time: selectedTime}));
+    Telegram.WebApp.close();
   }
 </script>
 </body>
