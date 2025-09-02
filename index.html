@@ -296,4 +296,225 @@
       <h3>Проверьте заказ</h3>
       <p><b>Адрес кофейни:</b> <span id="cafeAddress">ул. Ленина, 10 (BrewPoint)</span></p>
       <ul id="finalList" style="margin:8px 0 10px; padding-left:18px"></ul>
-      <p><b>Время:</b> <sp
+      <p><b>Время:</b> <span id="finalTime">—</span></p>
+      <p style="margin:8px 0 0"><b>Сумма к оплате:</b> <span id="finalTotal">0</span>₽</p>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn-ghost" onclick="closeCheckout()">Вернуться к каталогу</button>
+        <button class="btn" onclick="fakePay()">Оплатить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модалка «Заказ оформлен» -->
+  <div id="successModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="close-x" onclick="closeSuccess()">×</button>
+      <h3>Заказ оформлен!</h3>
+      <ul id="successList" style="margin:8px 0 10px; padding-left:18px"></ul>
+      <p>Номер заказа: #<span id="orderNumber">12345</span></p>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn" onclick="closeMiniApp()">Вернуться в чат</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Данные модификаторов для напитков (название -> наценка)
+    const MODS = [
+      { id:'sugar',    title:'1 ложка сахара',   add: 0 },
+      { id:'vanilla',  title:'Ванильный сироп',  add: 20 },
+      { id:'caramel',  title:'Карамельный сироп',add: 20 },
+      { id:'choco',    title:'Шоколадный сироп', add: 20 }
+    ];
+
+    // --- Состояние
+    let cart = [];
+    let selectedTime = null;
+    let currentItem = null; // {name, basePrice}
+    let pendingAfterUpsell = false; // показываем чек после апселла
+    const cafeAddress = "ул. Ленина, 10 (BrewPoint)";
+
+    // --- Утилиты
+    const $ = sel => document.querySelector(sel);
+    const show = el => el.style.display = 'block';
+    const hide = el => el.style.display = 'none';
+
+    function updateCart(){
+      const list = $('#cart-list');
+      list.innerHTML='';
+      cart.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${item.name} ${item.price}₽${item.time ? ' – '+item.time : ''}</span>
+                        <button class="rem" onclick="removeItem(${idx})">×</button>`;
+        list.appendChild(li);
+      });
+      $('#total').textContent = cart.reduce((s,i)=>s+i.price,0);
+      $('#timeLine').textContent = `Время: ${selectedTime || 'не выбрано'}`;
+    }
+    function addToCart(name, price, time){
+      cart.push({name, price, time});
+      updateCart();
+    }
+    function removeItem(idx){
+      cart.splice(idx,1);
+      updateCart();
+    }
+
+    // --- Модификаторы
+    function openMods(name, basePrice){
+      currentItem = { name, basePrice, mods:[] };
+      const holder = $('#modsList');
+      holder.innerHTML = '';
+      MODS.forEach(m => {
+        const row = document.createElement('div');
+        row.className = 'mod-item';
+        row.innerHTML = `
+          <input type="checkbox" id="m_${m.id}" data-add="${m.add}">
+          <label class="mod-label" for="m_${m.id}">${m.title} <span class="muted">${m.add ? `( +${m.add}₽ )` : ''}</span></label>
+        `;
+        holder.appendChild(row);
+      });
+      show($('#modsModal'));
+    }
+    function closeMods(){ hide($('#modsModal')); currentItem = null; }
+    function confirmMods(){
+      if(!currentItem) return;
+      // собираем модификаторы
+      let add = 0; const modsPicked = [];
+      MODS.forEach(m=>{
+        const el = document.getElementById(`m_${m.id}`);
+        if(el && el.checked){ add += Number(el.dataset.add||0); modsPicked.push(m.title.toLowerCase()); }
+      });
+      currentItem.mods = modsPicked;
+      currentItem.finalName = currentItem.name + (modsPicked.length ? ` (${modsPicked.join(', ')})` : '');
+      currentItem.finalPrice = currentItem.basePrice + add;
+      hide($('#modsModal'));
+      openTime();
+    }
+
+    // --- Время
+    function openTime(){ show($('#timeModal')); }
+    function closeTime(){ hide($('#timeModal')); }
+    function selectTime(t){
+      selectedTime = t;
+      addToCart(currentItem.finalName, currentItem.finalPrice, selectedTime);
+      closeTime();
+    }
+    function selectCustom(){
+      const val = $('#customTime').value;
+      if(!val){ alert('Укажите время'); return; }
+      selectedTime = val;
+      addToCart(currentItem.finalName, currentItem.finalPrice, selectedTime);
+      closeTime();
+    }
+
+    // --- Оплата + апселл
+    function pay(){
+      if(cart.length === 0){ alert('Корзина пуста'); return; }
+      // если в корзине только напитки — предложим десерты
+      const onlyDrinks = cart.length>0 && cart.every(i => ['латте','капучино'].some(n => i.name.toLowerCase().includes(n)));
+      if(onlyDrinks){
+        buildUpsell();
+        pendingAfterUpsell = true;
+        show($('#upsellModal'));
+        return;
+      }
+      openCheckout();
+    }
+
+    function closeUpsell(){ hide($('#upsellModal')); }
+    function skipUpsell(){ closeUpsell(); if(pendingAfterUpsell){ openCheckout(); } }
+
+    // строим варианты апселла с финальной ценой
+    function buildUpsell(){
+      const subtotal = cart.reduce((s,i)=>s+i.price,0);
+      const oneDessert = 120; // базовые цены из каталога
+      const twoDesserts = 120 + 220;
+      const disc1 = 0.10; // 10% скидка на весь заказ при 1 десерте
+      const disc2 = 0.15; // 15% скидка при 2 десертах
+
+      $('#upsellHint').textContent = `Сделаем скидку на весь заказ: −10% при добавлении 1 десерта или −15% при 2 десертах.`;
+
+      const total1 = Math.round((subtotal + oneDessert) * (1 - disc1));
+      const total2 = Math.round((subtotal + twoDesserts) * (1 - disc2));
+
+      $('#upsellDeals').innerHTML = `
+        <div class="deal">
+          <div>
+            <strong>Напитки + 1 десерт</strong><br>
+            <span class="small">Круассан (120₽) • Скидка −10% на всё</span>
+          </div>
+          <div>
+            <div class="price" style="color:#fff;font-weight:800">${total1}₽</div>
+            <button class="btn" style="margin-top:6px" onclick="applyUpsell(1, ${total1})">Добавить</button>
+          </div>
+        </div>
+        <div style="height:8px"></div>
+        <div class="deal">
+          <div>
+            <strong>Напитки + 2 десерта</strong><br>
+            <span class="small">Круассан (120₽) + Чизкейк (220₽) • Скидка −15% на всё</span>
+          </div>
+          <div>
+            <div class="price" style="color:#fff;font-weight:800">${total2}₽</div>
+            <button class="btn" style="margin-top:6px" onclick="applyUpsell(2, ${total2})">Добавить</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function applyUpsell(count, finalTotal){
+      // добавим десерты в корзину и проставим спец.флаг скидки
+      if(count >= 1) addToCart('Круассан (апселл)', 120, selectedTime);
+      if(count >= 2) addToCart('Чизкейк (апселл)', 220, selectedTime);
+
+      // сохраняем итог к оплате (перезапишем при чеке)
+      $('#total').textContent = finalTotal;
+      closeUpsell();
+      openCheckout(finalTotal);
+    }
+
+    // --- Чек
+    function openCheckout(forcedTotal){
+      const list = $('#finalList');
+      list.innerHTML = cart.map(i => `<li>${i.name} — ${i.price}₽${i.time ? ' — '+i.time : ''}</li>`).join('');
+      $('#finalTime').textContent = selectedTime || '—';
+
+      const normalTotal = cart.reduce((s,i)=>s+i.price,0);
+      const final = forcedTotal ? forcedTotal : normalTotal;
+      $('#finalTotal').textContent = final;
+      show($('#checkoutModal'));
+    }
+    function closeCheckout(){ hide($('#checkoutModal')); }
+
+    // --- Оформление (эмуляция)
+    function fakePay(){
+      // финальный список
+      $('#successList').innerHTML = cart.map(i => `<li>${i.name} — ${i.price}₽${i.time ? ' — '+i.time : ''}</li>`).join('');
+      $('#orderNumber').textContent = Math.floor(Math.random()*90000)+10000;
+
+      hide($('#checkoutModal'));
+      show($('#successModal'));
+    }
+    function closeSuccess(){ hide($('#successModal')); }
+
+    // Отправка данных в бота + закрытие WebApp
+    function closeMiniApp(){
+      const payload = {
+        command: 'order',
+        items: cart,
+        total: Number($('#finalTotal').textContent),
+        time: selectedTime,
+        address: cafeAddress
+      };
+      try{
+        Telegram.WebApp.sendData(JSON.stringify(payload));
+      }catch(e){
+        console.log('sendData error', e);
+      }
+      // даём Телеграму время доставить событие
+      setTimeout(() => { Telegram.WebApp.close(); }, 400);
+    }
+  </script>
+</body>
+</html>
