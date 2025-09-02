@@ -1,248 +1,299 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>BrewPoint</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>BrewPoint</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
-html, body {
-  margin: 0; padding: 0;
-  font-family: 'Inter', sans-serif;
-  color: #fff;
-  height: 100%;
-}
-body {
-  background: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
-  display: flex; flex-direction: column;
-  min-height: 100vh;
-  padding: 12px;
-}
-body::before {
-  content: "";
-  position: fixed;
-  top:0; left:0; width:100%; height:100%;
-  background: rgba(0,0,0,0.55);
-  z-index: -1;
-}
-h1 { text-align: center; color: #f7d7b5; font-weight: 700; font-size: 22px; }
-.section { margin-bottom: 24px; }
-.section h2 { color: #f7d7b5; margin: 0 0 12px 0; font-size: 18px; }
-.products { display: flex; flex-wrap: wrap; justify-content: center; }
-.card {
-  flex: 1 1 45%; max-width: 200px;
-  background: rgba(255,255,255,0.9); border-radius: 18px;
-  margin: 6px; box-shadow: 0 6px 14px rgba(0,0,0,.2);
-  text-align: center; overflow: hidden; color: #333;
-}
-.card img { width: 100%; height: 120px; object-fit: cover; }
-.card h3 { font-size: 15px; margin: 6px 0 2px; }
-.card p.desc { font-size: 12px; margin: 0 6px 6px; color: #555; }
-.card .price { font-weight: 700; color: #8b5e34; margin-bottom: 6px; }
-button {
-  background: #a67c52; color: #fff; border: none;
-  border-radius: 12px; padding: 8px 12px; font-size: 14px; margin-bottom: 8px;
-}
-button:hover { background: #8b5e34; }
+    :root{
+      --bg: #0f0e0d;
+      --text: #f7f3ee;
+      --muted: #cfc8c0;
+      --brand: #b7895b;
+      --brand-dark:#8b5e34;
+      --card: rgba(255,255,255,0.08);
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+      --radius: 18px;
+    }
 
-/* Модальные окна */
-.modal {
-  display: none; position: fixed; top:0; left:0; width:100%; height:100%;
-  background: rgba(0,0,0,.7); z-index: 999; overflow-y: auto; padding: 16px;
-}
-.modal-content {
-  background: #fff; border-radius: 18px; padding: 18px;
-  max-width: calc(100% - 32px); margin: 40px auto; text-align: center; color: #333;
-  box-sizing: border-box;
-}
-.modal-content h3 { color: #6b4226; font-size: 18px; text-align: left; margin-bottom:12px; }
+    *{box-sizing:border-box}
+    html, body { height: 100%; }
+    body{
+      margin:0; color:var(--text); font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: var(--bg);
+      min-height: 100dvh;
+      -webkit-font-smoothing:antialiased;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
 
-/* Модификаторы */
-#modModal label {
-  display: flex; align-items: center; margin-bottom: 6px; justify-content: flex-start;
-}
-#modModal input[type="checkbox"] { margin-right: 8px; flex-shrink: 0; }
+    /* Фон — фиксированная подложка на весь экран */
+    .bg{
+      position: fixed; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.75)),
+        url('https://images.unsplash.com/photo-1494415859740-21e878dd929d?q=80&w=1800&auto=format&fit=crop');
+      background-size: cover; background-position: center;
+      z-index: -1;
+    }
 
-.offer-btn {
-  display: block; width: 100%; margin: 8px 0; padding: 12px;
-  border-radius: 12px; font-size: 14px; background: #f1e1d0;
-  border: 2px solid #a67c52; color: #6b4226; font-weight: 600;
-}
-</style>
+    .wrap{
+      width: 100%; max-width: 900px; margin: 0 auto; padding: 16px 16px 28px;
+    }
+
+    header{
+      padding: 8px 0 6px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .brand{ font-weight:700; font-size: 22px; letter-spacing:.2px }
+    .pill{
+      background: rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.12);
+      padding:8px 12px; border-radius: 999px; box-shadow: var(--shadow);
+      font-size: 13px; color:var(--muted)
+    }
+
+    h1{ font-size: 24px; margin: 16px 0 8px }
+    .section-title{ font-size: 18px; margin: 10px 4px 10px; color:#f0e8df; font-weight:600 }
+
+    /* Сетка карточек под мобильный */
+    .grid{
+      display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px;
+    }
+    @media (min-width: 480px){
+      .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); gap:14px; }
+    }
+
+    .card{
+      background: var(--card); border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius); overflow:hidden; backdrop-filter: blur(8px);
+      box-shadow: var(--shadow);
+    }
+    .thumb{ width:100%; aspect-ratio: 1/1; object-fit: cover; display:block }
+    .card-body{ padding:10px 10px 12px }
+    .card h3{ margin:0 0 4px; font-size:15.5px }
+    .desc{ margin:0 0 8px; color: var(--muted); font-size:12.5px }
+    .row{ display:flex; align-items:center; justify-content:space-between }
+    .price{ color: var(--brand); font-weight:700; font-size:15.5px }
+    .btn{
+      background: var(--brand); color:#fff; border:none; border-radius: 12px;
+      padding:9px 12px; font-size: 14px; font-weight:600; cursor:pointer;
+      transition: .15s; box-shadow: var(--shadow)
+    }
+    .btn:hover{ background: var(--brand-dark) }
+
+    /* Корзина */
+    #cart{
+      position: sticky; bottom: 0;
+      background: rgba(24,23,22,.85); backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255,255,255,.12);
+      padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+      margin-top: 18px; border-radius: 16px 16px 0 0;
+      box-shadow: 0 -10px 30px rgba(0,0,0,.35);
+    }
+    #cart h2{ margin:0 0 8px; font-size:17px }
+    #cart-list{ list-style:none; margin:0 0 8px; padding:0; max-height: 26vh; overflow:auto }
+    #cart-list li{ font-size: 14px; margin: 6px 0; display:flex; align-items:center; justify-content:space-between; gap:8px }
+    .rem{ margin-left:8px;background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:4px 8px;font-size:12px }
+
+    /* Модалки — адаптивные */
+    .modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index: 1000; padding: 16px; }
+    .modal-content{
+      position: relative;
+      width: 100%; max-width: 520px; margin: auto;
+      background: #1b1917; color:var(--text);
+      border-radius: 22px; padding: 18px 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow);
+    }
+    .modal h3{ margin: 2px 0 12px; font-size: 18px }
+    .close-x{ position:absolute; top:10px; right:12px; font-size:20px; background:none; border:none; color:#fff; opacity:.7 }
+
+    /* Выравнивание чекбоксов под левую кромку заголовка */
+    .mods{
+      margin-left: 0;
+      padding-left: 0;
+    }
+    .mod-item{
+      display:flex; align-items:center; gap:10px;
+      padding: 8px 2px;
+    }
+    .mod-item input[type="checkbox"]{
+      width: 18px; height: 18px; accent-color: var(--brand);
+    }
+    .mod-label{ font-size: 14.5px; color: #e9e2da }
+    .muted{ color: var(--muted); font-size: 13px }
+
+    /* Кнопки времени */
+    .time-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:8px; margin: 8px 0 2px }
+    .time-btn{
+      background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+      padding:10px 8px; border-radius: 12px; font-weight:600; color:#fff;
+    }
+    .time-btn:active{ transform: translateY(1px) }
+
+    /* Upsell карточка — адаптивная */
+    .upsell-box{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px; padding: 14px; margin: 8px 0 0;
+    }
+    .deal{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 10px; background: rgba(0,0,0,.25); border-radius: 14px; border:1px solid rgba(255,255,255,.1) }
+    .deal strong{ font-size: 15px }
+    .deal .small{ font-size: 12.5px; color: var(--muted) }
+
+    /* Кнопки действий в модалках */
+    .actions{ display:flex; gap:10px; flex-wrap: wrap; margin-top: 12px }
+    .btn-ghost{ background: rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.2); border-radius:12px; padding:9px 12px; font-weight:600 }
+
+    /* Кнопка оплаты */
+    .pay-row{ display:flex; align-items:center; justify-content:space-between; margin-top: 10px; gap:8px }
+    .total{ font-weight:800; font-size: 18px; color:#fff }
+
+    /* Утилиты */
+    .hidden{ display:none !important }
+  </style>
 </head>
 <body>
+  <div class="bg"></div>
 
-<h1>Меню BrewPoint</h1>
+  <div class="wrap">
+    <header>
+      <div class="brand">BrewPoint</div>
+      <div class="pill">Сегодня: 08:00–21:00</div>
+    </header>
 
-<!-- Кофе -->
-<div class="section">
-  <h2>Кофе</h2>
-  <div class="products">
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=300&q=80">
-      <h3>Латте</h3>
-      <p class="desc">Классический молочный кофе</p>
-      <p class="price">200₽</p>
-      <button onclick="openModifiers('Латте',200)">В корзину</button>
+    <h1>Меню</h1>
+
+    <!-- Кофе -->
+    <div class="section">
+      <div class="section-title">Кофе</div>
+      <div class="grid" id="coffee-grid">
+        <!-- Латте -->
+        <div class="card">
+          <img class="thumb" src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80" alt="">
+          <div class="card-body">
+            <h3>Латте</h3>
+            <p class="desc">Мягкий молочный кофе</p>
+            <div class="row">
+              <div class="price" data-base="200">200₽</div>
+              <button class="btn" onclick="openMods('Латте', 200)">В корзину</button>
+            </div>
+          </div>
+        </div>
+        <!-- Капучино -->
+        <div class="card">
+          <img class="thumb" src="https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80" alt="">
+          <div class="card-body">
+            <h3>Капучино</h3>
+            <p class="desc">Насыщенный с молочной пенкой</p>
+            <div class="row">
+              <div class="price" data-base="180">180₽</div>
+              <button class="btn" onclick="openMods('Капучино', 180)">В корзину</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=300&q=80">
-      <h3>Капучино</h3>
-      <p class="desc">Насыщенный вкус с молочной пенкой</p>
-      <p class="price">180₽</p>
-      <button onclick="openModifiers('Капучино',180)">В корзину</button>
+
+    <!-- Десерты -->
+    <div class="section">
+      <div class="section-title">Десерты</div>
+      <div class="grid" id="dessert-grid">
+        <div class="card">
+          <img class="thumb" src="https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=600&q=80" alt="">
+          <div class="card-body">
+            <h3>Круассан</h3>
+            <p class="desc">Тёплый, слоёный</p>
+            <div class="row">
+              <div class="price" data-base="120">120₽</div>
+              <button class="btn" onclick="addToCart('Круассан', 120, null)">В корзину</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <img class="thumb" src="https://images.unsplash.com/photo-1607478900766-efe13248b125?auto=format&fit=crop&w=600&q=80" alt="">
+          <div class="card-body">
+            <h3>Чизкейк</h3>
+            <p class="desc">Нежный творожный</p>
+            <div class="row">
+              <div class="price" data-base="220">220₽</div>
+              <button class="btn" onclick="addToCart('Чизкейк', 220, null)">В корзину</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Корзина -->
+    <div id="cart">
+      <h2>Корзина</h2>
+      <ul id="cart-list"></ul>
+      <div class="row"><span id="timeLine" class="muted">Время: не выбрано</span></div>
+      <div class="pay-row">
+        <div class="total">Итого: <span id="total">0</span>₽</div>
+        <button class="btn" onclick="pay()">Оплатить</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Десерты -->
-<div class="section">
-  <h2>Десерты</h2>
-  <div class="products">
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=300&q=80">
-      <h3>Круассан</h3>
-      <p class="desc">Хрустящий и свежий</p>
-      <p class="price">120₽</p>
-      <button onclick="addToCart('Круассан',120,'dessert')">В корзину</button>
-    </div>
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1607478900766-efe13248b125?auto=format&fit=crop&w=300&q=80">
-      <h3>Чизкейк</h3>
-      <p class="desc">Нежный творожный десерт</p>
-      <p class="price">220₽</p>
-      <button onclick="addToCart('Чизкейк',220,'dessert')">В корзину</button>
+  <!-- Модалка модификаторов -->
+  <div id="modsModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="close-x" onclick="closeMods()">×</button>
+      <h3>Выберите модификаторы</h3>
+
+      <div id="modsList" class="mods">
+        <!-- генерируется скриптом -->
+      </div>
+
+      <div class="actions">
+        <button class="btn" onclick="confirmMods()">Далее к времени</button>
+        <button class="btn-ghost" onclick="closeMods()">Отмена</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Корзина -->
-<div id="cart">
-  <h2>Корзина</h2>
-  <ul id="cart-list"></ul>
-  <p>Итого: <span id="total">0</span>₽</p>
-  <button onclick="pay()">Оплатить</button>
-</div>
-
-<!-- Модальные окна -->
-<div id="modModal" class="modal">
-  <div class="modal-content">
-    <h3>Выберите модификаторы</h3>
-    <label><input type="checkbox" value="0" data-name="Сахар"> 1 ложка сахара (+0₽)</label>
-    <label><input type="checkbox" value="20" data-name="Ваниль"> Ванильный (+20₽)</label>
-    <label><input type="checkbox" value="20" data-name="Карамель"> Карамельный (+20₽)</label>
-    <label><input type="checkbox" value="20" data-name="Шоколад"> Шоколадный (+20₽)</label>
-    <button onclick="confirmModifiers()">Добавить</button>
-    <button onclick="closeMod()">Отмена</button>
+  <!-- Модалка времени -->
+  <div id="timeModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="close-x" onclick="closeTime()">×</button>
+      <h3>Когда приготовить?</h3>
+      <div class="time-grid">
+        <button class="time-btn" onclick="selectTime('Сейчас')">Сейчас</button>
+        <button class="time-btn" onclick="selectTime('Через 30 мин')">Через 30 мин</button>
+        <button class="time-btn" onclick="selectTime('Через 1 час')">Через 1 час</button>
+      </div>
+      <div style="margin-top:10px">
+        <label class="muted">Свое время: <input type="time" id="customTime" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:8px"></label>
+        <div class="actions"><button class="btn" onclick="selectCustom()">Выбрать</button></div>
+      </div>
+    </div>
   </div>
-</div>
 
-<div id="dessertOfferModal" class="modal">
-  <div class="modal-content">
-    <h3>Добавьте десерт и получите скидку 🍰</h3>
-    <div id="dessertOptions"></div>
-    <button onclick="skipDesserts()">Нет, перейти к оплате</button>
+  <!-- Модалка upsell десертов -->
+  <div id="upsellModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="close-x" onclick="closeUpsell()">×</button>
+      <h3>Добавьте десерт и получите скидку</h3>
+      <div class="muted" id="upsellHint" style="margin-bottom:8px"></div>
+
+      <div class="upsell-box" id="upsellDeals">
+        <!-- генерируется: 1 десерт и 2 десерта с финальной ценой -->
+      </div>
+
+      <div class="actions">
+        <button class="btn-ghost" onclick="skipUpsell()">Продолжить без десертов</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<div id="checkoutModal" class="modal">
-  <div class="modal-content">
-    <h3>Проверьте заказ</h3>
-    <ul id="finalList"></ul>
-    <p><b>Сумма:</b> <span id="finalTotal">0</span>₽</p>
-    <button onclick="closeCheckout()">Вернуться</button>
-    <button onclick="fakePay()">Оплатить</button>
-  </div>
-</div>
-
-<div id="successModal" class="modal">
-  <div class="modal-content">
-    <h3>Заказ оформлен!</h3>
-    <ul id="successList"></ul>
-    <button onclick="closeMiniApp()">Вернуться в чат</button>
-  </div>
-</div>
-
-<script>
-let cart = [], discount = 0, currentItem = null;
-
-function openModifiers(name, price){
-  currentItem = {name, basePrice: price};
-  document.getElementById('modModal').style.display = 'block';
-}
-function closeMod(){ document.getElementById('modModal').style.display = 'none'; }
-function confirmModifiers(){
-  const mods = Array.from(document.querySelectorAll('#modModal input:checked'))
-    .map(cb => ({name: cb.dataset.name, price:+cb.value}));
-  let finalPrice = currentItem.basePrice + mods.reduce((s,m)=>s+m.price,0);
-  let itemName = currentItem.name + (mods.length ? ' ('+mods.map(m=>m.name).join(', ')+')' : '');
-  addToCart(itemName, finalPrice, 'coffee');
-  closeMod();
-}
-
-function addToCart(name, price, type){
-  cart.push({name, price, type});
-  updateCart();
-}
-function updateCart(){
-  document.getElementById('cart-list').innerHTML = cart.map((i,idx)=>`<li>${i.name} ${i.price}₽ <button onclick="removeItem(${idx})">×</button></li>`).join('');
-  document.getElementById('total').textContent = calcTotal();
-}
-function removeItem(i){ cart.splice(i,1); updateCart(); }
-function calcTotal(){ 
-  let sum = cart.reduce((s,i)=>s+i.price,0);
-  return discount>0 ? Math.round(sum*(1-discount/100)) : sum;
-}
-
-function pay(){
-  if(cart.length===0){ alert('Корзина пуста'); return; }
-  if(!cart.some(i=>i.type==='dessert')){ showDessertOffer(); return; }
-  showCheckout();
-}
-
-function showDessertOffer(){
-  let base = cart.reduce((s,i)=>s+i.price,0);
-  let oneDessert = base+120, twoDesserts = base+120+220;
-  document.getElementById('dessertOptions').innerHTML = `
-    <button class="offer-btn" onclick="chooseDesserts(['Круассан'],10,${oneDessert})">Ваш заказ + Круассан = ${Math.round(oneDessert*0.9)}₽ (–10%)</button>
-    <button class="offer-btn" onclick="chooseDesserts(['Чизкейк'],10,${base+220})">Ваш заказ + Чизкейк = ${Math.round((base+220)*0.9)}₽ (–10%)</button>
-    <button class="offer-btn" onclick="chooseDesserts(['Круассан','Чизкейк'],15,${twoDesserts})">Ваш заказ + 2 десерта = ${Math.round(twoDesserts*0.85)}₽ (–15%)</button>
-  `;
-  document.getElementById('dessertOfferModal').style.display='block';
-}
-function chooseDesserts(arr, disc, total){
-  discount=disc;
-  arr.forEach(d=>cart.push({name:d+' (комбо)', price:(d==='Круассан'?120:220), type:'dessert'}));
-  document.getElementById('dessertOfferModal').style.display='none';
-  updateCart(); showCheckout();
-}
-function skipDesserts(){ discount=0; document.getElementById('dessertOfferModal').style.display='none'; showCheckout(); }
-
-function showCheckout(){
-  document.getElementById('finalList').innerHTML=cart.map(i=>`<li>${i.name} ${i.price}₽</li>`).join('');
-  document.getElementById('finalTotal').textContent=calcTotal();
-  document.getElementById('checkoutModal').style.display='block';
-}
-function closeCheckout(){ document.getElementById('checkoutModal').style.display='none'; }
-
-function fakePay(){
-  document.getElementById('successList').innerHTML=document.getElementById('finalList').innerHTML;
-  document.getElementById('checkoutModal').style.display='none';
-  document.getElementById('successModal').style.display='block';
-
-  // --- Отправка заказа в бот ---
-  Telegram.WebApp.sendData(JSON.stringify({
-    command:'order',
-    items: cart,
-    total: calcTotal(),
-    address: "ул. Ленина, 10"
-  }));
-}
-
-function closeMiniApp(){ Telegram.WebApp.close(); }
-</script>
-
-</body>
-</html>
+  <!-- Модалка «Проверьте заказ» -->
+  <div id="checkoutModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="close-x" onclick="closeCheckout()">×</button>
+      <h3>Проверьте заказ</h3>
+      <p><b>Адрес кофейни:</b> <span id="cafeAddress">ул. Ленина, 10 (BrewPoint)</span></p>
+      <ul id="finalList" style="margin:8px 0 10px; padding-left:18px"></ul>
+      <p><b>Время:</b> <sp
