@@ -7,13 +7,17 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-    body {
+    html, body {
+      margin: 0; padding: 0;
       font-family: 'Inter', sans-serif;
-      margin: 0; padding: 12px;
       color: #fff;
+      height: 100%;
+    }
+    body {
       background: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
-      height: 100vh;
       display: flex; flex-direction: column;
+      min-height: 100vh;
+      padding: 12px;
     }
     body::before {
       content: "";
@@ -66,6 +70,8 @@
       margin-bottom: 8px;
     }
     button:hover { background: #8b5e34; }
+
+    /* Модальные окна */
     .modal {
       display: none;
       position: fixed;
@@ -79,12 +85,25 @@
       background: #fff;
       border-radius: 18px;
       padding: 18px;
-      max-width: 400px;
+      max-width: calc(100% - 32px);
       margin: 40px auto;
       text-align: center;
       color: #333;
+      box-sizing: border-box;
     }
-    .modal-content h3 { color: #6b4226; font-size: 18px; }
+    .modal-content h3 { color: #6b4226; font-size: 18px; text-align: left; margin-bottom:12px; }
+
+    /* Модификаторы */
+    #modModal label {
+      display: flex; align-items: center;
+      margin-bottom: 6px;
+      justify-content: flex-start;
+    }
+    #modModal input[type="checkbox"] {
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
     .offer-btn {
       display: block; width: 100%;
       margin: 8px 0; padding: 12px;
@@ -155,10 +174,10 @@
 <div id="modModal" class="modal">
   <div class="modal-content">
     <h3>Выберите модификаторы</h3>
-    <label><input type="checkbox" value="0" data-name="Сахар"> 1 ложка сахара (+0₽)</label><br>
-    <label><input type="checkbox" value="20" data-name="Ваниль"> Ванильный (+20₽)</label><br>
-    <label><input type="checkbox" value="20" data-name="Карамель"> Карамельный (+20₽)</label><br>
-    <label><input type="checkbox" value="20" data-name="Шоколад"> Шоколадный (+20₽)</label><br>
+    <label><input type="checkbox" value="0" data-name="Сахар"> 1 ложка сахара (+0₽)</label>
+    <label><input type="checkbox" value="20" data-name="Ваниль"> Ванильный (+20₽)</label>
+    <label><input type="checkbox" value="20" data-name="Карамель"> Карамельный (+20₽)</label>
+    <label><input type="checkbox" value="20" data-name="Шоколад"> Шоколадный (+20₽)</label>
     <button onclick="confirmModifiers()">Добавить</button>
     <button onclick="closeMod()">Отмена</button>
   </div>
@@ -254,12 +273,20 @@
     document.getElementById('checkoutModal').style.display='block';
   }
   function closeCheckout(){ document.getElementById('checkoutModal').style.display='none'; }
-  function fakePay(){
+
+  async function fakePay(){
     document.getElementById('successList').innerHTML=document.getElementById('finalList').innerHTML;
     document.getElementById('checkoutModal').style.display='none';
     document.getElementById('successModal').style.display='block';
-    Telegram.WebApp.sendData(JSON.stringify({command:'order', items:cart, total:calcTotal(), address:"ул. Ленина, 10"}));
+
+    // Отправка данных на сервер бота через fetch
+    await fetch('https://yourserver.com/web_app', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({command:'order', items:cart, total:calcTotal(), address:"ул. Ленина, 10"})
+    });
   }
+
   function closeMiniApp(){ Telegram.WebApp.close(); }
 </script>
 </body>
