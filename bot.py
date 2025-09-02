@@ -3,7 +3,7 @@ from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 import json
 
-TOKEN = '8214259668:AAEBnbyiR4kKIuL_4Kqyn7kRo0zbdNK4a8c'
+TOKEN = ''
 
 async def start(update: Update, _):
     kb = [['📋 Каталог', '👤 Кабинет', '📦 Мои заказы', '💎 Лояльность', '❓ Поддержка']]
