@@ -514,7 +514,7 @@
         address: cafeAddress
       };
       console.log("sending payload", payload);   // <-- увидите в DevTools Mini-App
-      alert("Данные отправлены!");               // <-- модалка должна закрыться
+      alert(payload);               // <-- модалка должна закрыться
       try{
         Telegram.WebApp.sendData(JSON.stringify(payload));
       }catch(e){
