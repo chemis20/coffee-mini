@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>BrewPoint</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
@@ -20,139 +20,104 @@
     }
 
     *{box-sizing:border-box}
-    html, body { height: 100%; }
+    html,body{height:100%;}
     body{
-      margin:0; color:var(--text); font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background: var(--bg);
-      min-height: 100dvh;
-      -webkit-font-smoothing:antialiased;
-      padding-bottom: env(safe-area-inset-bottom);
+      margin:0;color:var(--text);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);min-height:100dvh;-webkit-font-smoothing:antialiased;
+      padding-bottom:env(safe-area-inset-bottom);
     }
 
-    /* Фон — фиксированная подложка на весь экран */
     .bg{
-      position: fixed; inset: 0;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.75)),
-        url('https://images.unsplash.com/photo-1494415859740-21e878dd929d?q=80&w=1800&auto=format&fit=crop');
-      background-size: cover; background-position: center;
-      z-index: -1;
+      position:fixed;inset:0;
+      background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.75)),
+                 url('https://images.unsplash.com/photo-1494415859740-21e878dd929d?q=80&w=1800&auto=format&fit=crop');
+      background-size:cover;background-position:center;z-index:-1;
     }
 
-    .wrap{
-      width: 100%; max-width: 900px; margin: 0 auto; padding: 16px 16px 28px;
-    }
+    .wrap{width:100%;max-width:900px;margin:0 auto;padding:16px 16px 28px;}
 
-    header{
-      padding: 8px 0 6px;
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .brand{ font-weight:700; font-size: 22px; letter-spacing:.2px }
-    .pill{
-      background: rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.12);
-      padding:8px 12px; border-radius: 999px; box-shadow: var(--shadow);
-      font-size: 13px; color:var(--muted)
-    }
+    header{padding:8px 0 6px;display:flex;align-items:center;justify-content:space-between;}
+    .brand{font-weight:700;font-size:22px;letter-spacing:.2px}
+    .pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);
+          padding:8px 12px;border-radius:999px;box-shadow:var(--shadow);
+          font-size:13px;color:var(--muted)}
 
-    h1{ font-size: 24px; margin: 16px 0 8px }
-    .section-title{ font-size: 18px; margin: 10px 4px 10px; color:#f0e8df; font-weight:600 }
+    h1{font-size:24px;margin:16px 0 8px}
+    .section-title{font-size:18px;margin:10px 4px 10px;color:#f0e8df;font-weight:600}
 
-    /* Сетка карточек под мобильный */
-    .grid{
-      display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px;
-    }
-    @media (min-width: 480px){
-      .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); gap:14px; }
-    }
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+    @media(min-width:480px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}}
 
     .card{
-      background: var(--card); border:1px solid rgba(255,255,255,.12);
-      border-radius: var(--radius); overflow:hidden; backdrop-filter: blur(8px);
-      box-shadow: var(--shadow);
+      background:var(--card);border:1px solid rgba(255,255,255,.12);
+      border-radius:var(--radius);overflow:hidden;backdrop-filter:blur(8px);
+      box-shadow:var(--shadow);display:flex;flex-direction:column;
     }
-    .thumb{ width:100%; aspect-ratio: 1/1; object-fit: cover; display:block }
-    .card-body{ padding:10px 10px 12px }
-    .card h3{ margin:0 0 4px; font-size:15.5px }
-    .desc{ margin:0 0 8px; color: var(--muted); font-size:12.5px }
-    .row{ display:flex; align-items:center; justify-content:space-between }
-    .price{ color: var(--brand); font-weight:700; font-size:15.5px }
+    .thumb{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
+    .card-body{padding:10px 10px 12px;display:flex;flex-direction:column;flex:1}
+    .card h3{margin:0 0 4px;font-size:15.5px}
+    .desc{margin:0 0 8px;color:var(--muted);font-size:12.5px;line-height:1.3em;min-height:2.6em}
+    .row{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+    .price{color:var(--brand);font-weight:700;font-size:15.5px}
     .btn{
-      background: var(--brand); color:#fff; border:none; border-radius: 12px;
-      padding:9px 12px; font-size: 14px; font-weight:600; cursor:pointer;
-      transition: .15s; box-shadow: var(--shadow)
+      background:var(--brand);color:#fff;border:none;border-radius:12px;
+      padding:9px 12px;font-size:14px;font-weight:600;cursor:pointer;
+      transition:.15s;box-shadow:var(--shadow)
     }
-    .btn:hover{ background: var(--brand-dark) }
+    .btn:hover{background:var(--brand-dark)}
 
-    /* Корзина */
     #cart{
-      position: sticky; bottom: 0;
-      background: rgba(24,23,22,.85); backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(255,255,255,.12);
-      padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
-      margin-top: 18px; border-radius: 16px 16px 0 0;
-      box-shadow: 0 -10px 30px rgba(0,0,0,.35);
+      position:sticky;bottom:0;
+      background:rgba(24,23,22,.85);backdrop-filter:blur(10px);
+      border-top:1px solid rgba(255,255,255,.12);
+      padding:12px 12px calc(12px + env(safe-area-inset-bottom));
+      margin-top:18px;border-radius:16px 16px 0 0;
+      box-shadow:0 -10px 30px rgba(0,0,0,.35);
     }
-    #cart h2{ margin:0 0 8px; font-size:17px }
-    #cart-list{ list-style:none; margin:0 0 8px; padding:0; max-height: 26vh; overflow:auto }
-    #cart-list li{ font-size: 14px; margin: 6px 0; display:flex; align-items:center; justify-content:space-between; gap:8px }
-    .rem{ margin-left:8px;background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:4px 8px;font-size:12px }
+    #cart h2{margin:0 0 8px;font-size:17px}
+    #cart-list{list-style:none;margin:0 0 8px;padding:0;max-height:26vh;overflow:auto}
+    #cart-list li{font-size:14px;margin:6px 0;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .rem{margin-left:8px;background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:4px 8px;font-size:12px}
 
-    /* Модалки — адаптивные */
-    .modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index: 1000; padding: 16px; }
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;padding:16px;}
     .modal-content{
-      position: relative;
-      width: 100%; max-width: 520px; margin: auto;
-      background: #1b1917; color:var(--text);
-      border-radius: 22px; padding: 18px 16px;
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: var(--shadow);
+      position:relative;width:100%;max-width:520px;margin:auto;
+      background:#1b1917;color:var(--text);border-radius:22px;padding:18px 16px;
+      border:1px solid rgba(255,255,255,.12);box-shadow:var(--shadow);
     }
-    .modal h3{ margin: 2px 0 12px; font-size: 18px }
-    .close-x{ position:absolute; top:10px; right:12px; font-size:20px; background:none; border:none; color:#fff; opacity:.7 }
+    .modal h3{margin:2px 0 12px;font-size:18px}
+    .close-x{position:absolute;top:10px;right:12px;font-size:20px;background:none;border:none;color:#fff;opacity:.7}
 
-    /* Выравнивание чекбоксов под левую кромку заголовка */
-    .mods{
-      margin-left: 0;
-      padding-left: 0;
-    }
-    .mod-item{
-      display:flex; align-items:center; gap:10px;
-      padding: 8px 2px;
-    }
-    .mod-item input[type="checkbox"]{
-      width: 18px; height: 18px; accent-color: var(--brand);
-    }
-    .mod-label{ font-size: 14.5px; color: #e9e2da }
-    .muted{ color: var(--muted); font-size: 13px }
+    .mods{margin-left:0;padding-left:0}
+    .mod-item{display:flex;align-items:center;gap:10px;padding:8px 2px}
+    .mod-item input[type="checkbox"]{width:18px;height:18px;accent-color:var(--brand)}
+    .mod-label{font-size:14.5px;color:#e9e2da}
+    .muted{color:var(--muted);font-size:13px}
 
-    /* Кнопки времени */
-    .time-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:8px; margin: 8px 0 2px }
+    .time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 2px}
     .time-btn{
-      background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
-      padding:10px 8px; border-radius: 12px; font-weight:600; color:#fff;
+      background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+      padding:10px 8px;border-radius:12px;font-weight:600;color:#fff;
     }
-    .time-btn:active{ transform: translateY(1px) }
+    .time-btn:active{transform:translateY(1px)}
 
-    /* Upsell карточка — адаптивная */
     .upsell-box{
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 18px; padding: 14px; margin: 8px 0 0;
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:14px;margin:8px 0 0;
     }
-    .deal{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 10px; background: rgba(0,0,0,.25); border-radius: 14px; border:1px solid rgba(255,255,255,.1) }
-    .deal strong{ font-size: 15px }
-    .deal .small{ font-size: 12.5px; color: var(--muted) }
+    .deal{display:flex;align-items:center;justify-content:space-between;gap:10px;
+          padding:10px 10px;background:rgba(0,0,0,.25);border-radius:14px;border:1px solid rgba(255,255,255,.1)}
+    .deal strong{font-size:15px}
+    .deal .small{font-size:12.5px;color:var(--muted)}
 
-    /* Кнопки действий в модалках */
-    .actions{ display:flex; gap:10px; flex-wrap: wrap; margin-top: 12px }
-    .btn-ghost{ background: rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.2); border-radius:12px; padding:9px 12px; font-weight:600 }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2);
+               border-radius:12px;padding:9px 12px;font-weight:600}
 
-    /* Кнопка оплаты */
-    .pay-row{ display:flex; align-items:center; justify-content:space-between; margin-top: 10px; gap:8px }
-    .total{ font-weight:800; font-size: 18px; color:#fff }
+    .pay-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px}
+    .total{font-weight:800;font-size:18px;color:#fff}
 
-    /* Утилиты */
-    .hidden{ display:none !important }
+    .hidden{display:none!important}
   </style>
 </head>
 <body>
@@ -280,7 +245,7 @@
       <div class="muted" id="upsellHint" style="margin-bottom:8px"></div>
 
       <div class="upsell-box" id="upsellDeals">
-        <!-- генерируется: 1 десерт и 2 десерта с финальной ценой -->
+        <!-- генерируется -->
       </div>
 
       <div class="actions">
@@ -319,7 +284,7 @@
   </div>
 
   <script>
-    // --- Данные модификаторов для напитков (название -> наценка)
+    // --- Данные модификаторов
     const MODS = [
       { id:'sugar',    title:'1 ложка сахара',   add: 0 },
       { id:'vanilla',  title:'Ванильный сироп',  add: 20 },
@@ -330,8 +295,8 @@
     // --- Состояние
     let cart = [];
     let selectedTime = null;
-    let currentItem = null; // {name, basePrice}
-    let pendingAfterUpsell = false; // показываем чек после апселла
+    let currentItem = null;
+    let pendingAfterUpsell = false;
     const cafeAddress = "ул. Ленина, 10 (BrewPoint)";
 
     // --- Утилиты
@@ -342,7 +307,7 @@
     function updateCart(){
       const list = $('#cart-list');
       list.innerHTML='';
-      cart.forEach((item, idx) => {
+      cart.forEach((item, idx)=>{
         const li = document.createElement('li');
         li.innerHTML = `<span>${item.name} ${item.price}₽${item.time ? ' – '+item.time : ''}</span>
                         <button class="rem" onclick="removeItem(${idx})">×</button>`;
@@ -365,7 +330,7 @@
       currentItem = { name, basePrice, mods:[] };
       const holder = $('#modsList');
       holder.innerHTML = '';
-      MODS.forEach(m => {
+      MODS.forEach(m=>{
         const row = document.createElement('div');
         row.className = 'mod-item';
         row.innerHTML = `
@@ -379,7 +344,6 @@
     function closeMods(){ hide($('#modsModal')); currentItem = null; }
     function confirmMods(){
       if(!currentItem) return;
-      // собираем модификаторы
       let add = 0; const modsPicked = [];
       MODS.forEach(m=>{
         const el = document.getElementById(`m_${m.id}`);
@@ -411,8 +375,7 @@
     // --- Оплата + апселл
     function pay(){
       if(cart.length === 0){ alert('Корзина пуста'); return; }
-      // если в корзине только напитки — предложим десерты
-      const onlyDrinks = cart.length>0 && cart.every(i => ['латте','капучино'].some(n => i.name.toLowerCase().includes(n)));
+      const onlyDrinks = cart.length>0 && cart.every(i=>['латте','капучино'].some(n=>i.name.toLowerCase().includes(n)));
       if(onlyDrinks){
         buildUpsell();
         pendingAfterUpsell = true;
@@ -421,19 +384,17 @@
       }
       openCheckout();
     }
-
     function closeUpsell(){ hide($('#upsellModal')); }
-    function skipUpsell(){ closeUpsell(); if(pendingAfterUpsell){ openCheckout(); } }
+    function skipUpsell(){ closeUpsell(); if(pendingAfterUpsell) openCheckout(); }
 
-    // строим варианты апселла с финальной ценой
     function buildUpsell(){
       const subtotal = cart.reduce((s,i)=>s+i.price,0);
-      const oneDessert = 120; // базовые цены из каталога
+      const oneDessert = 120;
       const twoDesserts = 120 + 220;
-      const disc1 = 0.10; // 10% скидка на весь заказ при 1 десерте
-      const disc2 = 0.15; // 15% скидка при 2 десертах
+      const disc1 = 0.10;
+      const disc2 = 0.15;
 
-      $('#upsellHint').textContent = `Сделаем скидку на весь заказ: −10% при добавлении 1 десерта или −15% при 2 десертах.`;
+      $('#upsellHint').textContent = 'Сделаем скидку на весь заказ: −10% при добавлении 1 десерта или −15% при 2 десертах.';
 
       const total1 = Math.round((subtotal + oneDessert) * (1 - disc1));
       const total2 = Math.round((subtotal + twoDesserts) * (1 - disc2));
@@ -464,11 +425,8 @@
     }
 
     function applyUpsell(count, finalTotal){
-      // добавим десерты в корзину и проставим спец.флаг скидки
-      if(count >= 1) addToCart('Круассан (апселл)', 120, selectedTime);
-      if(count >= 2) addToCart('Чизкейк (апселл)', 220, selectedTime);
-
-      // сохраняем итог к оплате (перезапишем при чеке)
+      if(count>=1) addToCart('Круассан (апселл)', 120, selectedTime);
+      if(count>=2) addToCart('Чизкейк (апселл)', 220, selectedTime);
       $('#total').textContent = finalTotal;
       closeUpsell();
       openCheckout(finalTotal);
@@ -477,22 +435,18 @@
     // --- Чек
     function openCheckout(forcedTotal){
       const list = $('#finalList');
-      list.innerHTML = cart.map(i => `<li>${i.name} — ${i.price}₽${i.time ? ' — '+i.time : ''}</li>`).join('');
+      list.innerHTML = cart.map(i=>`<li>${i.name} — ${i.price}₽${i.time ? ' — '+i.time : ''}</li>`).join('');
       $('#finalTime').textContent = selectedTime || '—';
-
       const normalTotal = cart.reduce((s,i)=>s+i.price,0);
-      const final = forcedTotal ? forcedTotal : normalTotal;
-      $('#finalTotal').textContent = final;
+      $('#finalTotal').textContent = forcedTotal || normalTotal;
       show($('#checkoutModal'));
     }
     function closeCheckout(){ hide($('#checkoutModal')); }
 
     // --- Оформление (эмуляция)
     function fakePay(){
-      // финальный список
-      $('#successList').innerHTML = cart.map(i => `<li>${i.name} — ${i.price}₽${i.time ? ' — '+i.time : ''}</li>`).join('');
+      $('#successList').innerHTML = cart.map(i=>`<li>${i.name} — ${i.price}₽${i.time ? ' — '+i.time : ''}</li>`).join('');
       $('#orderNumber').textContent = Math.floor(Math.random()*90000)+10000;
-
       hide($('#checkoutModal'));
       show($('#successModal'));
     }
@@ -501,7 +455,7 @@
     // Отправка данных в бота + закрытие WebApp
     function closeMiniApp(){
       const payload = {
-        command: 'order',
+        command:'order',
         items: cart,
         total: Number($('#finalTotal').textContent),
         time: selectedTime,
@@ -512,8 +466,7 @@
       }catch(e){
         console.log('sendData error', e);
       }
-      // даём Телеграму время доставить событие
-      setTimeout(() => { Telegram.WebApp.close(); }, 400);
+      setTimeout(()=>{ Telegram.WebApp.close(); }, 400);
     }
   </script>
 </body>
