@@ -502,6 +502,7 @@
     function closeMiniApp(){
       // обязательная инициализация
       Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
 
       const payload = {
         command: 'order',
