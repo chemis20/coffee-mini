@@ -431,21 +431,21 @@
     }
 
     // --- Отправка данных в бота
-    function closeMiniApp(){
-      Telegram.WebApp.ready(); // обязательно
-      const payload = {
-        command: 'order',
-        order_id: Math.floor(Math.random()*90000)+10000,
-        tg_user_id: Telegram.WebApp.initDataUnsafe?.user?.id,
-        items: cart,
-        total: Number(document.getElementById('finalTotal').textContent),
-        time: selectedTime,
-        address: cafeAddress
-      };
-      console.log("payload ready ->", payload);
-      Telegram.WebApp.sendData(JSON.stringify(payload));
-      setTimeout(() => Telegram.WebApp.close(), 400);
-    }
+  function closeMiniApp(){
+  Telegram.WebApp.ready();
+  const payload = {
+    command: 'order',
+    order_id: Math.floor(Math.random()*90000)+10000,
+    tg_user_id: Telegram.WebApp.initDataUnsafe?.user?.id,
+    items: cart,
+    total: Number(document.getElementById('finalTotal').textContent),
+    time: selectedTime,
+    address: cafeAddress
+  };
+  console.log("payload ready ->", payload);
+  Telegram.WebApp.sendData(JSON.stringify(payload));
+  setTimeout(() => Telegram.WebApp.close(), 400);
+}
   </script>
 </body>
 </html>
