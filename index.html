@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>BrewPoint</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
+  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
     :root{
@@ -430,22 +430,30 @@
       document.getElementById('successModal').style.display='none';
     }
 
-    // --- Отправка данных в бота
-  function closeMiniApp(){
+<script>
   Telegram.WebApp.ready();
-  const payload = {
-    command: 'order',
-    order_id: Math.floor(Math.random()*90000)+10000,
-    tg_user_id: Telegram.WebApp.initDataUnsafe?.user?.id,
-    items: cart,
-    total: Number(document.getElementById('finalTotal').textContent),
-    time: selectedTime,
-    address: cafeAddress
-  };
-  console.log("payload ready ->", payload);
-  Telegram.WebApp.sendData(JSON.stringify(payload));
-  setTimeout(() => Telegram.WebApp.close(), 400);
-}
-  </script>
+
+  // --- Отправка данных в бота
+  function closeMiniApp(){
+    const payload = {
+      command: 'order',
+      order_id: Math.floor(Math.random()*90000)+10000,
+      tg_user_id: Telegram.WebApp.initDataUnsafe?.user?.id || null,
+      items: cart,
+      total: Number(document.getElementById('finalTotal').textContent),
+      time: selectedTime,
+      address: cafeAddress
+    };
+    console.log("payload ready ->", payload);
+
+    try {
+      Telegram.WebApp.sendData(JSON.stringify(payload));
+    } catch(e){
+      console.error("Ошибка sendData:", e);
+    }
+
+    setTimeout(() => Telegram.WebApp.close(), 500);
+  }
+</script>
 </body>
 </html>
