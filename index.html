@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>BrewPoint</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- ========== СТИЛИ (без изменений) ========== -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
     :root{--bg:#0f0e0d;--text:#f7f3ee;--muted:#cfc8c0;--brand:#b7895b;--brand-dark:#8b5e34;
@@ -13,7 +15,7 @@
     body{margin:0;color:var(--text);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
          background:var(--bg);min-height:100dvh;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
     .bg{position:fixed;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.75)),
-                 url('https://images.unsplash.com/photo/1494415859740-21e878dd929d?q=80&w=1800&auto=format&fit=crop');
+                 url('https://images.unsplash.com/photo-1494415859740-21e878dd929d?q=80&w=1800&auto=format&fit=crop');
          background-size:cover;background-position:center;z-index:-1}
     .wrap{width:100%;max-width:900px;margin:0 auto;padding:16px 16px 28px}
     header{padding:8px 0 6px;display:flex;align-items:center;justify-content:space-between}
@@ -38,11 +40,13 @@
 </head>
 <body>
   <div class="bg"></div>
+
   <div class="wrap">
     <header>
       <div class="brand">BrewPoint</div>
       <div class="pill">Сегодня: 08:00–21:00</div>
     </header>
+
     <h1>Меню</h1>
 
     <!-- Кофе -->
@@ -115,26 +119,104 @@
     </div>
   </div>
 
-  <!-- Модалки -->
-  <div id="modsModal" class="modal" role="dialog"><div class="modal-content"><button class="close-x" onclick="closeMods()">×</button><h3>Выберите модификаторы</h3><div id="modsList" class="mods"></div><div class="actions"><button class="btn" onclick="confirmMods()">Далее к времени</button><button class="btn-ghost" onclick="closeMods()">Отмена</button></div></div></div>
-  <div id="timeModal" class="modal" role="dialog"><div class="modal-content"><button class="close-x" onclick="closeTime()">×</button><h3>Когда приготовить?</h3><div class="time-grid"><button class="time-btn" onclick="selectTime('Сейчас')">Сейчас</button><button class="time-btn" onclick="selectTime('Через 30 мин')">Через 30 мин</button><button class="time-btn" onclick="selectTime('Через 1 час')">Через 1 час</button></div><div style="margin-top:10px"><label class="muted">Свое время: <input type="time" id="customTime" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:8px"></label><div class="actions"><button class="btn" onclick="selectCustom()">Выбрать</button></div></div></div></div>
-  <div id="upsellModal" class="modal" role="dialog"><div class="modal-content"><button class="close-x" onclick="closeUpsell()">×</button><h3>Добавьте десерт и получите скидку</h3><div class="muted" id="upsellHint"></div><div class="upsell-box" id="upsellDeals"></div><div class="actions"><button class="btn-ghost" onclick="skipUpsell()">Продолжить без десертов</button></div></div></div>
-  <div id="checkoutModal" class="modal" role="dialog"><div class="modal-content"><button class="close-x" onclick="closeCheckout()">×</button><h3>Проверьте заказ</h3><p><b>Адрес кофейни:</b> <span id="cafeAddress">ул. Ленина, 10 (BrewPoint)</span></p><ul id="finalList" style="margin:8px 0 10px; padding-left:18px"></ul><p><b>Время:</b> <span id="finalTime">—</span></p><p style="margin:8px 0 0"><b>Сумма к оплате:</b> <span id="finalTotal">0</span>₽</p><div class="actions" style="margin-top:12px"><button class="btn-ghost" onclick="closeCheckout()">Вернуться к каталогу</button><button class="btn" onclick="fakePay()">Оплатить</button></div></div></div>
-  <div id="successModal" class="modal" role="dialog"><div class="modal-content"><button class="close-x" onclick="closeSuccess()">×</button><h3>Заказ оформлен!</h3><ul id="successList" style="margin:8px 0 10px; padding-left:18px"></ul><p>Номер заказа: #<span id="orderNumber">12345</span></p><div class="actions" style="margin-top:12px"><button class="btn" onclick="closeMiniApp()">Вернуться в чат</button></div></div></div>
+  <!-- Модалка модификаторов -->
+  <div id="modsModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="close-x" onclick="closeMods()">×</button>
+      <h3>Выберите модификаторы</h3>
 
+      <div id="modsList" class="mods">
+        <!-- генерируется скриптом -->
+      </div>
+
+      <div class="actions">
+        <button class="btn" onclick="confirmMods()">Далее к времени</button>
+        <button class="btn-ghost" onclick="closeMods()">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модалка времени -->
+  <div id="timeModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="close-x" onclick="closeTime()">×</button>
+      <h3>Когда приготовить?</h3>
+      <div class="time-grid">
+        <button class="time-btn" onclick="selectTime('Сейчас')">Сейчас</button>
+        <button class="time-btn" onclick="selectTime('Через 30 мин')">Через 30 мин</button>
+        <button class="time-btn" onclick="selectTime('Через 1 час')">Через 1 час</button>
+      </div>
+      <div style="margin-top:10px">
+        <label class="muted">Свое время: <input type="time" id="customTime" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:8px"></label>
+        <div class="actions"><button class="btn" onclick="selectCustom()">Выбрать</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модалка upsell десертов -->
+  <div id="upsellModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="close-x" onclick="closeUpsell()">×</button>
+      <h3>Добавьте десерт и получите скидку</h3>
+      <div class="muted" id="upsellHint" style="margin-bottom:8px"></div>
+
+      <div class="upsell-box" id="upsellDeals">
+        <!-- генерируется: 1 десерт и 2 десерта с финальной ценой -->
+      </div>
+
+      <div class="actions">
+        <button class="btn-ghost" onclick="skipUpsell()">Продолжить без десертов</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модалка «Проверьте заказ» -->
+  <div id="checkoutModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="close-x" onclick="closeCheckout()">×</button>
+      <h3>Проверьте заказ</h3>
+      <p><b>Адрес кофейни:</b> <span id="cafeAddress">ул. Ленина, 10 (BrewPoint)</span></p>
+      <ul id="finalList" style="margin:8px 0 10px; padding-left:18px"></ul>
+      <p><b>Время:</b> <span id="finalTime">—</span></p>
+      <p style="margin:8px 0 0"><b>Сумма к оплате:</b> <span id="finalTotal">0</span>₽</p>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn-ghost" onclick="closeCheckout()">Вернуться к каталогу</button>
+        <button class="btn" onclick="fakePay()">Оплатить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модалка «Заказ оформлен» -->
+  <div id="successModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="close-x" onclick="closeSuccess()">×</button>
+      <h3>Заказ оформлен!</h3>
+      <ul id="successList" style="margin:8px 0 10px; padding-left:18px"></ul>
+      <p>Номер заказа: #<span id="orderNumber">12345</span></p>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn" onclick="closeMiniApp()">Вернуться в чат</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== СКРИПТЫ (полные) ========== -->
   <script>
     // 1. обязательная инициализация
     Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
 
-    // 2. ваши переменные
-    const SERVER_URL = "https://eok4k766hks0b1f.m.pipedream.net"; // замените на свой Pipedream-URL
-    const WEBHOOK_SECRET = "s3cr3t_brew_2025";          // тот же секрет, что в Pipedream
+    // 2. параметры webhook
+    const SERVER_URL = "https://eok4k766hks0b1f.m.pipedream.net"; // <-- ваш Pipedream-URL
+    const WEBHOOK_SECRET = "s3cr3t_brew";                // <-- секрет из Pipedream
 
+    // 3. переменные состояния
     const cafeAddress = "ул. Ленина, 10 (BrewPoint)";
     let cart = [];            // {name, price, time}
     let selectedTime = null;  // строка времени
+    let currentItem = null;   // {name, basePrice, ...}
+    let pendingAfterUpsell = false;
 
-    // 3. короткие утилиты
+    // 4. короткие утилиты
     const $ = sel => document.querySelector(sel);
     const show = el => el.style.display = 'block';
     const hide = el => el.style.display = 'none';
@@ -160,8 +242,7 @@
       updateCart();
     }
 
-    // 4. модификаторы (коротко)
-    let currentItem = null;
+    // 5. модификаторы
     const MODS = [
       { id:'sugar',    title:'1 ложка сахара',   add: 0 },
       { id:'vanilla',  title:'Ванильный сироп',  add: 20 },
@@ -199,7 +280,7 @@
       openTime();
     }
 
-    // 5. время
+    // 6. время
     function openTime(){ show($('#timeModal')); }
     function closeTime(){ hide($('#timeModal')); }
     function selectTime(t){
@@ -215,7 +296,7 @@
       closeTime();
     }
 
-    // 6. оплата + upsell
+    // 7. оплата + upsell
     function pay(){
       if(cart.length === 0){ alert('Корзина пуста'); return; }
       const onlyDrinks = cart.length>0 && cart.every(i=>['латте','капучино'].some(n=>i.name.toLowerCase().includes(n)));
@@ -259,7 +340,7 @@
       openCheckout(finalTotal);
     }
 
-    // 7. чек
+    // 8. чек
     function openCheckout(forcedTotal){
       const list = document.getElementById('finalList');
       list.innerHTML = cart.map(i => `<li>${i.name} — ${i.price}₽${i.time ? ' — '+i.time : ''}</li>`).join('');
@@ -272,7 +353,7 @@
       document.getElementById('checkoutModal').style.display='none';
     }
 
-    // 8. финальное оформление
+    // 9. финальное оформление
     function fakePay(){
       document.getElementById('successList').innerHTML = cart.map(i => `<li>${i.name} — ${i.price}₽${i.time ? ' — '+i.time : ''}</li>`).join('');
       document.getElementById('orderNumber').textContent = Math.floor(Math.random()*90000)+10000;
@@ -283,7 +364,7 @@
       document.getElementById('successModal').style.display='none';
     }
 
-    // 9. ОТПРАВКА ДАННЫХ (webhook + sendData)
+    // 10. ОТПРАВКА ДАННЫХ (webhook + sendData) БЕЗ alert
     async function closeMiniApp(){
       const payload = {
         command: 'order',
@@ -305,9 +386,10 @@
           },
           body: JSON.stringify(payload)
         });
-        console.log("Webhook resp status:", resp.status);
+        if (!resp.ok) console.warn("Webhook responded with status", resp.status);
+        else console.log("Webhook delivered:", await resp.json());
       } catch (e) {
-        console.warn("Webhook POST failed:", e);
+        console.error("Webhook error:", e);
       }
 
       // 2) Telegram WebApp.sendData (дублёр)
