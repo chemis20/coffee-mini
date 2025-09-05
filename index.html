@@ -485,45 +485,25 @@
     }
 
     // 10. ОТПРАВКА ДАННЫХ (webhook + sendData) БЕЗ alert
-    async function closeMiniApp(){
-      const payload = {
-        command: 'order',
-        order_id: Math.floor(Math.random()*9000000),
-        tg_user_id: Telegram?.WebApp?.initDataUnsafe?.user?.id || null,
-        items: cart,
-        total: Number(document.getElementById('finalTotal').textContent),
-        time: selectedTime || null,
-        address: cafeAddress || "ул. Ленина, 10 (BrewPoint)"
-      };
+async function closeMiniApp(){
+  const payload = {
+    command: 'order',
+    order_id: Math.floor(Math.random()*9000000),
+    tg_user_id: Telegram?.WebApp?.initDataUnsafe?.user?.id || null,
+    items: cart,
+    total: Number(document.getElementById('finalTotal').textContent),
+    time: selectedTime || null,
+    address: cafeAddress
+  };
 
-      // 1) POST на Pipedream
-      try {
-        const resp = await fetch(SERVER_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Webhook-Secret": WEBHOOK_SECRET
-          },
-          body: JSON.stringify(payload)
-        });
-        if (!resp.ok) console.warn("Webhook responded with status", resp.status);
-        else console.log("Webhook delivered:", await resp.json());
-      } catch (e) {
-        console.error("Webhook error:", e);
-      }
+  await fetch(SERVER_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Webhook-Secret": WEBHOOK_SECRET
+    },
+    body: JSON.stringify(payload)
+  });
 
-      // 2) Telegram WebApp.sendData (дублёр)
-      try {
-        Telegram.WebApp.sendData(JSON.stringify(payload));
-      } catch (e) {
-        console.warn("sendData failed:", e);
-      }
-
-      // 3) закрываем мини-ап
-      setTimeout(() => {
-        try { Telegram.WebApp.close(); } catch (e) { console.warn(e); }
-      }, 500);
-    }
-  </script>
-</body>
-</html>
+  setTimeout(() => Telegram.WebApp.close(), 500);
+}
